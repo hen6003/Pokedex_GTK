@@ -30,12 +30,12 @@ var (
 	PokeImg    *gtk.Image
 )
 
-// Appends single value to the DexView's model
+// AppendToList appends single value to the DexView's model
 func AppendToList(ListStore *gtk.ListStore, column int, value string) {
 	ListStore.SetValue(ListStore.Append(), column, value)
 }
 
-// Appends several values to the DexView's model
+// AppendMultipleToList appends several values to the DexView's model
 func AppendMultipleToList(ListStore *gtk.ListStore, values ...string) {
 	for _, v := range values {
 		AppendToList(ListStore, 0, v)
@@ -61,7 +61,7 @@ func downloadURL(url string) []byte {
 	return body
 }
 
-// Handler of "changed" signal of DexView's selection
+// DexSelectionChanged handler of "changed" signal of DexView's selection
 func DexSelectionChanged(s *gtk.TreeSelection) {
 	// Returns glib.List of gtk.TreePath pointers
 	rows := s.GetSelectedRows(DexStore)
@@ -90,7 +90,7 @@ func DexSelectionChanged(s *gtk.TreeSelection) {
 	Entry.SetText(fmt.Sprint(items))
 }
 
-// Handler of "changed" signal of PokeView's selection
+// PokeSelectionChanged handler of "changed" signal of PokeView's selection
 func PokeSelectionChanged(s *gtk.TreeSelection) {
 	// Returns glib.List of gtk.TreePath pointers
 	rows := s.GetSelectedRows(PokeStore)
@@ -102,7 +102,6 @@ func PokeSelectionChanged(s *gtk.TreeSelection) {
 		val, _ := value.GoValue()
 		num := fmt.Sprint(val)
 
-		// go func() { // seperate thread to avoid freezes
 		p, _ := pokeapi.Pokemon(string(num))
 
 		StatStore.Clear()
@@ -118,8 +117,6 @@ func PokeSelectionChanged(s *gtk.TreeSelection) {
 		i, _ := gdk.PixbufNewFromDataOnly(downloadURL(p.Sprites.FrontDefault))
 		i, _ = i.ScaleSimple(200, 200, gdk.INTERP_TILES)
 		PokeImg.SetFromPixbuf(i)
-
-		// }()
 	}
 }
 
